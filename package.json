@@ -4,12 +4,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run clean; tsc; npm run copy-views; npm run copy-views; rimraf dist && npx tsc",
-    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc && npm run copy-views",
+    "clean": "rimraf dist",
     "copy-views": "cp -r src/views/ dist/views/",
-    "prestart": "npm run build",
     "start": "node dist/server.js",
-    "preserve": "npm run build",
     "serve": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
   },
   "keywords": [],
