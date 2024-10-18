@@ -42,11 +42,13 @@ client.connect()
     .then(() => console.log("Spojena baza."))
     .catch(err => console.error("Greška: ", err));
 const { auth } = require('express-openid-connect');
+const externalUrl = process.env.RENDER_EXTERNAL_URL;
+const port = externalUrl && process.env.PORT ? parseInt(process.env.PORT) : 4080;
 const config = {
     authRequired: false,
     auth0Logout: true,
     secret: process.env.AUTH0_SECRET,
-    baseURL: process.env.AUTH0_BASEURL,
+    baseURL: externalUrl || `https://localhost:${port}`,
     clientID: process.env.AUTH0_CLIENT_ID1,
     issuerBaseURL: process.env.AUTH0_ISSUER,
     routes: {
@@ -54,6 +56,13 @@ const config = {
     },
 };
 app.use(auth(config));
+if (externalUrl) {
+    const hostname = '0.0.0.0'; //ne 127.0.0.1
+    app.listen(port, hostname, () => {
+        console.log(`Server locally running at http://${hostname}:${port}/ and from
+  outside on ${externalUrl}`);
+    });
+}
 function getAccessToken() {
     return __awaiter(this, void 0, void 0, function* () {
         const options = {

@@ -6,6 +6,8 @@ import indexRouter from './routes/index';
 import generateRouter from './routes/generate-ticket';
 import detailsRouter from './routes/ticket-details';
 import axios from 'axios';
+import fs from 'fs';
+import https from 'https';
 
 const app: Express = express();
 dotenv.config();
@@ -31,11 +33,16 @@ client.connect()
 
 const { auth } = require('express-openid-connect');
 
+
+const externalUrl = process.env.RENDER_EXTERNAL_URL;
+const port = externalUrl && process.env.PORT ? parseInt(process.env.PORT) : 4080;
+
+
 const config = {
   authRequired: false,
   auth0Logout: true,
   secret: process.env.AUTH0_SECRET,
-  baseURL: process.env.AUTH0_BASEURL,
+  baseURL: externalUrl || `https://localhost:${port}`,
   clientID: process.env.AUTH0_CLIENT_ID1,
   issuerBaseURL: process.env.AUTH0_ISSUER,
   routes: {
@@ -44,6 +51,23 @@ const config = {
 };
 
 app.use(auth(config));
+
+if (externalUrl) {
+  const hostname = '0.0.0.0'; //ne 127.0.0.1
+  app.listen(port, hostname, () => {
+  console.log(`Server locally running at http://${hostname}:${port}/ and from
+  outside on ${externalUrl}`);
+  });
+}
+else {
+  https.createServer({
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.cert')
+  }, app)
+  .listen(port, function () {
+  console.log(`Server running at https://localhost:${port}/`);
+  });
+}
 
 async function getAccessToken() {
   const options = {
