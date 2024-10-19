@@ -73,7 +73,7 @@ router.post("/", authenticateAccessToken, async (req: Request, res: Response): P
   
       await client.query('INSERT INTO ulaznice (id, vatin, firstName, lastName, createdAt) VALUES ($1, $2, $3, $4, $5)', [ticketUUID, vatin, firstName, lastName, createdAt]);
   
-      const qrCodeUrl = `http://localhost:3000/ticket-details/${ticketUUID}`;
+      const qrCodeUrl = `https://web2lab1-n1hd.onrender.com/ticket-details/${ticketUUID}`;
       const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
   
       res.status(201).json({

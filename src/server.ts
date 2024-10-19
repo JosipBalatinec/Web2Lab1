@@ -114,8 +114,5 @@ app.get('/get-token', async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-});
-
 export {client};
 export {getAccessToken};
