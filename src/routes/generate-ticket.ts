@@ -59,6 +59,12 @@ router.post("/", authenticateAccessToken, async (req: Request, res: Response): P
       }
 
       const { vatin, firstName, lastName } = req.body;
+
+      if(!vatin || vatin.length !== 11 || isNaN(vatin) || !firstName || typeof firstName !== 'string' || firstName.trim() === '' ||
+      !lastName || typeof lastName !== 'string' || lastName.trim() === '') { 
+        res.status(400).send("Podaci nisu ispravno uneseni.");
+        return;
+      }
  
       const result = await client.query('SELECT COUNT(*) FROM ulaznice WHERE vatin = $1', [vatin]);
       const count = parseInt(result.rows[0].count);
