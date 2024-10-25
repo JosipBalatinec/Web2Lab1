@@ -75,7 +75,7 @@ router.post("/", authenticateAccessToken, async (req: Request, res: Response): P
       }
   
       const ticketUUID = uuidv4();
-      const createdAt = new Date();
+      const createdAt = new Date(Date.now() + 2 * 60 * 60 * 1000);
   
       await client.query('INSERT INTO ulaznice (id, vatin, firstName, lastName, createdAt) VALUES ($1, $2, $3, $4, $5)', [ticketUUID, vatin, firstName, lastName, createdAt]);
   
